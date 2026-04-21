@@ -8,19 +8,21 @@
 // DrawerLayoutAndroid on Android, and a custom Animated.View panel on iOS.
 // No react-native-reanimated or @react-navigation/drawer needed.
 
+import 'react-native-gesture-handler';
 import React, { useRef, useState, useCallback } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet, SafeAreaView,
-  Animated, Dimensions, Platform, TouchableWithoutFeedback,
+  Animated, Dimensions, TouchableWithoutFeedback,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator }     from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 
 import { CartProvider, useCart } from './src/data/CartContext';
 import type { MainTabParamList, ShopStackParamList } from './src/types';
+import { DrawerContext } from './src/navigation/DrawerContext';
 
 import { CategoryListScreen }  from './src/screens/CategoryListScreen';
 import { ProductListScreen }   from './src/screens/ProductListScreen';
@@ -31,16 +33,9 @@ import { ProfileScreen }       from './src/screens/ProfileScreen';
 import { SettingsScreen }      from './src/screens/SettingsScreen';
 
 const DRAWER_WIDTH = 260;
-const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const Tab   = createBottomTabNavigator<MainTabParamList>();
-const Stack = createStackNavigator<ShopStackParamList>();
-
-// ─── Drawer context — lets any screen open/close the drawer ──────────────────
-export const DrawerContext = React.createContext<{
-  openDrawer: () => void;
-  closeDrawer: () => void;
-}>({ openDrawer: () => {}, closeDrawer: () => {} });
+const Stack = createNativeStackNavigator<ShopStackParamList>();
 
 // ─── CAPABILITY: Stack navigation + screen transitions ───────────────────────
 function ShopStack() {
@@ -50,16 +45,7 @@ function ShopStack() {
         headerStyle:      { backgroundColor: '#0F6E56' },
         headerTintColor:  '#FFFFFF',
         headerTitleStyle: { fontWeight: '600' },
-        cardStyleInterpolator: ({ current, layouts }) => ({
-          cardStyle: {
-            transform: [{
-              translateX: current.progress.interpolate({
-                inputRange:  [0, 1],
-                outputRange: [layouts.screen.width, 0],
-              }),
-            }],
-          },
-        }),
+        animation: 'slide_from_right',
       }}
     >
       <Stack.Screen name="CategoryList"  component={CategoryListScreen}  options={{ title: 'Shop' }} />
