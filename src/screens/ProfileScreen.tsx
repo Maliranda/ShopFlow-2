@@ -7,7 +7,7 @@ import {
   View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView,
 } from 'react-native';
 import { useContext } from 'react';
-import { DrawerContext } from '../../App';
+import { DrawerContext } from '../navigation/DrawerContext';
 import { useCart } from '../data/CartContext';
 
 const STATS = [
